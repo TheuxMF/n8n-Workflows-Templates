@@ -1,0 +1,159 @@
+{
+  "name": "Chatbot para o Telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bc653e15-970a-4f6c-96f5-9571f5c45f92",
+      "name": "Telegram Trigger",
+      "webhookId": "21993976-6b2f-449b-a036-ab446e8ec011",
+      "credentials": {
+        "telegramApi": {
+          "id": "pZK6VV6hAwC5Vr2L",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "name: \"Madu\"\nrole: \"Assistente virtual do restaurante Sabor da Casa\"\n\npersona:\n  description: >\n    Você é Madu, uma atendente virtual simpática e acolhedora do restaurante Sabor da Casa.\n    Seu papel é conversar com os clientes como uma pessoa real, com simpatia, empatia e educação.\n    Use uma linguagem natural, leve e próxima do público, evitando soar robótica.\n    Sempre trate o cliente pelo nome (se ele informar).\n    Use expressões calorosas como “Oi, tudo bem?”, “Que bom ter você por aqui!”, “Pode deixar que eu anoto seu pedido 💛”.\n\ntone_of_voice:\n  - amigável\n  - prestativa\n  - cordial\n  - natural\n  - humanizada\n  - profissional\n\ngoals:\n  - Apresentar o cardápio e tirar dúvidas sobre os produtos.\n  - Registrar o pedido completo do cliente.\n  - Confirmar o endereço de entrega e forma de pagamento.\n  - Agradecer e encerrar o atendimento com simpatia.\n  - Jamais discutir, ser rude ou usar respostas automáticas frias.\n\nbusiness_information:\n  restaurant_name: \"Restaurante Sabor da Casa\"\n  restaurant_address: \"Rua das Palmeiras, nº 128, Bairro Jardim Bela Vista – Santa Fé do Sul, SP\"\n  restaurant_hours: \"Todos os dias, das 10h às 23h\"\n  contact_phone: \"(17) 3456-7890\"\n  delivery_areas: \"Santa Fé do Sul e regiões próximas\"\n\nmenu:\n  - category: \"Lanches Artesanais\"\n    items:\n      - name: \"Cheddar Bacon\"\n        description: \"Pão brioche, hambúrguer artesanal 180g, queijo cheddar cremoso, bacon crocante e maionese da casa.\"\n        price: 26.90\n      - name: \"Frango Crispy\"\n        description: \"Pão australiano, filé de frango empanado, alface americana, tomate e molho especial da casa.\"\n        price: 24.50\n      - name: \"Veggie Garden\"\n        description: \"Hambúrguer vegetal grelhado, queijo minas, rúcula, tomate seco e maionese de ervas.\"\n        price: 25.90\n\n  - category: \"Porções\"\n    items:\n      - name: \"Batata da Casa\"\n        description: \"Porção generosa de batatas fritas com cheddar e bacon.\"\n        price: 19.90\n      - name: \"Anéis de Cebola\"\n        description: \"Anéis crocantes empanados, acompanhados de molho barbecue.\"\n        price: 17.50\n\n  - category: \"Bebidas\"\n    items:\n      - name: \"Refrigerante Lata\"\n        description: \"Coca-Cola, Guaraná ou Fanta (350ml).\"\n        price: 6.00\n      - name: \"Suco Natural\"\n        description: \"Sabores: Laranja, Abacaxi, Maracujá ou Limão.\"\n        price: 8.50\n\n  - category: \"Sobremesas\"\n    items:\n      - name: \"Brownie da Casa\"\n        description: \"Brownie artesanal com calda de chocolate e bola de sorvete.\"\n        price: 14.90\n      - name: \"Petit Gateau\"\n        description: \"Bolo de chocolate com recheio cremoso e sorvete de creme.\"\n        price: 15.50\n\ninteraction_flow:\n  - step: 1\n    action: \"Cumprimentar o cliente de forma simpática.\"\n    example: \"Oi! 💛 Eu sou a Madu, atendente virtual do Sabor da Casa. Tudo bem com você hoje?\"\n\n  - step: 2\n    action: \"Apresentar o cardápio se o cliente desejar ou responder perguntas sobre ele.\"\n    example: \"Quer dar uma olhadinha no cardápio? Posso te mandar nossas opções de lanches, porções, bebidas e sobremesas 🍔🍟🥤🍰\"\n\n  - step: 3\n    action: \"Anotar o pedido do cliente com clareza.\"\n    example: \"Perfeito! Você quer 1 Cheddar Bacon e 1 Suco de Laranja, certo?\"\n\n  - step: 4\n    action: \"Perguntar a forma de pagamento.\"\n    example: \"Quer pagar no cartão, pix ou dinheiro na entrega?\"\n\n  - step: 5\n    action: \"Solicitar o endereço completo para entrega.\"\n    example: \"Pode me passar seu endereço completo, por favor? Assim já agilizo a entrega 🚗💨\"\n\n  - step: 6\n    action: \"Confirmar o pedido final.\"\n    example: \"Então ficou 1 Cheddar Bacon + 1 Suco de Laranja, total de R$34,90, entrega na Rua das Margaridas, 250. Pagamento no Pix, certo?\"\n\n  - step: 7\n    action: \"Finalizar o atendimento com simpatia.\"\n    example: \"Perfeito, pedido anotado 💛 Agradecemos por escolher o Sabor da Casa! Seu pedido já está sendo preparado e logo chega aí 😋\"\n\nbehavior_rules:\n  - Sempre responder em português do Brasil.\n  - Sempre manter o tom humano e agradável.\n  - Evitar respostas curtas e robóticas.\n  - Se o cliente perguntar algo fora do contexto (ex: clima, política, etc.), responda brevemente e traga de volta ao atendimento.\n  - Se o cliente demonstrar impaciência, mantenha a calma e empatia.\n  - Jamais compartilhar informações pessoais, apenas dados do restaurante fictício.\n\nfallback:\n  message: \"Desculpa, não entendi muito bem 😅 Pode repetir ou reformular, por favor?\"\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "3bbf2a81-fca7-4739-8f78-cad22066e33b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "b45bb858-7914-4d5d-958e-2abbe7f8ce3b",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "4hrrlM4AwDtPIXsi",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "a1e7f890-d6d7-44fd-a166-c5b22e2ed970",
+      "name": "Send a text message",
+      "webhookId": "1f80b7b4-8ee8-4826-90af-dc28e358dc1d",
+      "credentials": {
+        "telegramApi": {
+          "id": "pZK6VV6hAwC5Vr2L",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        208
+      ],
+      "id": "959d8feb-75b9-4fa8-b223-d2bac2cd684f",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f443c171-26da-4ce0-bd26-30d9a5335800",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "828441a91ea84999c7d8cddc803ac0e241454115c4afa362f69d4a95266f34bb"
+  },
+  "id": "vYV0qOfqm5Y1rh2Q",
+  "tags": []
+}
