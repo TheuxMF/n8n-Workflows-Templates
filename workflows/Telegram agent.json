@@ -1,5 +1,5 @@
 {
-  "name": "Chatbot para o Telegram",
+  "name": "Telegram agent",
   "nodes": [
     {
       "parameters": {
