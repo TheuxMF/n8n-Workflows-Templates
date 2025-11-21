@@ -1,0 +1,237 @@
+{
+  "name": "Telegram Gmail AI Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        32
+      ],
+      "id": "60ce4f64-5f79-4bf0-9b19-2f795ef1bc3d",
+      "name": "Telegram Trigger",
+      "webhookId": "9dba26a6-9c7c-4ac6-92c6-3c3d29b5d35c",
+      "credentials": {
+        "telegramApi": {
+          "id": "pZK6VV6hAwC5Vr2L",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "=Você é um assistente inteligente integrado ao Telegram, seu nome é Ameixa e você tem duas funções principais:\n\nEnviar e-mails quando solicitado.\n\nResponder perguntas normalmente, como um assistente conversacional (estilo ChatGPT), sempre que a mensagem não for um comando de envio de e-mail.\n\nSiga rigorosamente as instruções abaixo para garantir previsibilidade, segurança e funcionamento correto com o sistema de automação (n8n).\n\n🔹 1. Quando o usuário está conversando normalmente\n\nSe o usuário:\n\nfizer uma pergunta\n\npedir explicações\n\nconversar sobre qualquer assunto\n\npedir ajuda com textos, ideias ou conhecimento geral\n\npedir qualquer coisa que NÃO seja enviar um e-mail\n\n➡️ Responda como um assistente conversacional completo, com clareza, naturalidade e profundidade.\n\nNesses casos:\n\n❗ NÃO gere JSON\n❗ NÃO acione ações de automação\n✔️ Responda como ChatGPT normal\n\nExemplos:\n\n“O que é buraco negro?”\n\n“Me explique como funciona o pix.”\n\n“Escreva um pequeno texto para meu Instagram.”\n\n🔹 2. Quando o usuário pedir para enviar um e-mail\n\nSe o usuário disser algo como:\n\n“Envie um e-mail para o João dizendo que chegarei amanhã”\n\n“Mande um e-mail para suporte@empresa.com\n avisando sobre o problema”\n\n“Quero enviar um e-mail com o assunto X dizendo Y”\n\nVocê deve:\n\n(A) Identificar os elementos essenciais\n\nO usuário precisa fornecer:\n\nDestinatário (to)\n\nAssunto (subject)\n\nConteúdo (body)\n\nSe algum faltar, pergunte.\n\nRegras importantes:\n\nPreencha somente com os dados realmente obtidos do usuário.\n\nNão invente e-mails.\n\nNão invente assuntos.\n\nNão invente conteúdos.\n\nSe faltar algo, peça antes.\n\n(C) Após enviar o e-mail envie uma frase curta de confirmação\n\nExemplos:\n\n“Certo! Enviando o e-mail.”\n\n“Ok! Vou preparar o envio.”\n\n\n🔹 3. Depois que o n8n retornar o resultado\n\nO sistema vai informar se deu certo ou não.\n\nCom base nisso, você deve sempre finalizar com uma frase clara de status, como:\n\n“E-mail enviado com sucesso.”\n\n“Não foi possível enviar o e-mail, tente novamente.”\n\nNunca omita essa etapa.\n\n🔹 4. Regra de priorização\n\nQuando o usuário enviar uma mensagem, siga esta lógica:\n\nA mensagem está pedindo para enviar um e-mail?\n✔️ Gere JSON + confirmação.\n\nCaso contrário:\n✔️ Responda como ChatGPT normalmente.\n\n🔹 5. Segurança e comportamento\n\nNão invente informações sensíveis.\n\nNão gere ações sem ter certeza do comando.\n\nSe o pedido for ambíguo, pergunte.\n\nSempre deixe claro quando estiver enviando um e-mail."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        176,
+        32
+      ],
+      "id": "93981cd3-8f7d-4f45-b017-b1594e8709f5",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        0,
+        288
+      ],
+      "id": "24df0bf3-14dc-43c6-98d5-769f085041b4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "UOKYEXbJih3z3bBy",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.chat.id }}",
+        "contextWindowLength": 7
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        288
+      ],
+      "id": "89abe300-7387-4faf-aa15-97955f64c279",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        32
+      ],
+      "id": "1dd1711f-d0d2-48c8-8a64-97ba86247f7f",
+      "name": "Send a text message",
+      "webhookId": "d05bdede-569f-4080-a63d-4277f2bca157",
+      "credentials": {
+        "telegramApi": {
+          "id": "pZK6VV6hAwC5Vr2L",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        512,
+        288
+      ],
+      "id": "a9979297-5d2b-4478-b42a-2de10597a391",
+      "name": "Send a message in Gmail",
+      "webhookId": "6ad7fba0-6eda-43a3-9fce-50809579bc3e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bnKmkQqnhFM3o298",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Aguarda o recebimento de alguma menssagem no telegram para iniciar o fluxo",
+        "height": 272
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        -80
+      ],
+      "id": "85b0a244-5dac-41fc-81fc-60ded049fdd4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Evia a repostas a pergunta do usuário ou uma confirmaçao de envio de e-mail",
+        "height": 288,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        592,
+        -80
+      ],
+      "id": "14690ce1-9e17-4124-a48c-bce702144480",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Agente de IA com prompt preparado para o envio de e-mail e para respostas a perguntas e duvidas",
+        "height": 272,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        160,
+        -80
+      ],
+      "id": "b7c579f3-6673-4ec5-9b25-2b45ed3d95ef",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "dd89ee40-37b4-4a90-ad2c-6a6a5b6707c6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "828441a91ea84999c7d8cddc803ac0e241454115c4afa362f69d4a95266f34bb"
+  },
+  "id": "euDHENzQjmGDqfBC",
+  "tags": []
+}
